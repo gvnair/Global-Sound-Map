@@ -12,6 +12,8 @@ tags:
     description: Health operations
   - name: recordings
     description: Audio recording operations
+  - name: follows
+    description: Social following operations
 paths:
   /healthz:
     get:
@@ -201,6 +203,100 @@ paths:
                 items:
                   $ref: "#/components/schemas/Recording"
 
+  /feed:
+    get:
+      operationId: getFeed
+      tags: [follows]
+      summary: Get personalized feed
+      description: Returns recordings from people the follower follows
+      parameters:
+        - name: followerName
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The username of the person viewing the feed
+      responses:
+        "200":
+          description: Feed recordings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Recording"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /follows:
+    get:
+      operationId: listFollows
+      tags: [follows]
+      summary: Get who a user follows
+      parameters:
+        - name: followerName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of followed names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Follow"
+    post:
+      operationId: followUser
+      tags: [follows]
+      summary: Follow a user by name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFollowBody"
+      responses:
+        "201":
+          description: Created follow
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Follow"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /follows/unfollow:
+    post:
+      operationId: unfollowUser
+      tags: [follows]
+      summary: Unfollow a user by name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFollowBody"
+      responses:
+        "204":
+          description: Unfollowed
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -319,3 +415,32 @@ components:
         - totalLikes
         - topLocations
         - recentCount
+
+    Follow:
+      type: object
+      properties:
+        id:
+          type: integer
+        followerName:
+          type: string
+        followingName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - followerName
+        - followingName
+        - createdAt
+
+    CreateFollowBody:
+      type: object
+      properties:
+        followerName:
+          type: string
+        followingName:
+          type: string
+      required:
+        - followerName
+        - followingName

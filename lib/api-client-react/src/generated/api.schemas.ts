@@ -57,6 +57,18 @@ export interface RecordingsSummary {
   recentCount: number;
 }
 
+export interface Follow {
+  id: number;
+  followerName: string;
+  followingName: string;
+  createdAt: string;
+}
+
+export interface CreateFollowBody {
+  followerName: string;
+  followingName: string;
+}
+
 export type ListRecordingsParams = {
   /**
    * Filter by latitude (requires lng and radiusKm)
@@ -70,4 +82,15 @@ export type ListRecordingsParams = {
    * Filter radius in kilometers
    */
   radiusKm?: number;
+};
+
+export type GetFeedParams = {
+  /**
+   * The username of the person viewing the feed
+   */
+  followerName: string;
+};
+
+export type ListFollowsParams = {
+  followerName: string;
 };

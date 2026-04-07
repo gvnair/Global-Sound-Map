@@ -1,13 +1,54 @@
-import { useListFeaturedRecordings, useListRecentRecordings, useGetRecordingsSummary, Recording } from "@workspace/api-client-react";
+import { useListFeaturedRecordings, useListRecentRecordings, useGetRecordingsSummary, useFollowUser, useListFollows, getListFollowsQueryKey, getGetFeedQueryKey, Recording } from "@workspace/api-client-react";
 import { usePlayer } from "@/components/player-context";
-import { Play, MapPin, Clock, Heart, Headphones } from "lucide-react";
+import { useUsername } from "@/hooks/use-username";
+import { useQueryClient } from "@tanstack/react-query";
+import { Play, MapPin, Clock, Heart, Headphones, UserPlus, UserCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-function RecordingCard({ recording, index }: { recording: Recording, index: number }) {
+function FollowButton({ authorName, followingNames }: { authorName: string; followingNames: string[] }) {
+  const { username } = useUsername();
+  const queryClient = useQueryClient();
+  const followMutation = useFollowUser();
+  const isFollowing = followingNames.includes(authorName);
+
+  if (!username || username === authorName) return null;
+
+  const handleFollow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isFollowing) return;
+    followMutation.mutate(
+      { data: { followerName: username, followingName: authorName } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListFollowsQueryKey({ followerName: username }) });
+          queryClient.invalidateQueries({ queryKey: getGetFeedQueryKey({ followerName: username }) });
+        },
+      }
+    );
+  };
+
+  return (
+    <button
+      onClick={handleFollow}
+      disabled={isFollowing || followMutation.isPending}
+      className={cn(
+        "flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border transition-all duration-300",
+        isFollowing
+          ? "border-primary/40 text-primary bg-primary/10 cursor-default"
+          : "border-white/10 text-muted-foreground hover:border-primary/50 hover:text-primary hover:bg-primary/5"
+      )}
+      data-testid={`button-follow-${authorName}`}
+    >
+      {isFollowing ? <UserCheck size={12} /> : <UserPlus size={12} />}
+      <span>{isFollowing ? "Following" : "Follow"}</span>
+    </button>
+  );
+}
+
+function RecordingCard({ recording, index, followingNames }: { recording: Recording, index: number, followingNames: string[] }) {
   const { playRecording, activeRecording } = usePlayer();
   const isPlaying = activeRecording?.id === recording.id;
 
@@ -19,6 +60,7 @@ function RecordingCard({ recording, index }: { recording: Recording, index: numb
       )}
       onClick={() => playRecording(recording)}
       style={{ animationDelay: `${index * 100}ms` }}
+      data-testid={`card-recording-${recording.id}`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
@@ -32,9 +74,11 @@ function RecordingCard({ recording, index }: { recording: Recording, index: numb
           )}>
             {isPlaying ? <Headphones size={20} className="animate-pulse" /> : <Play size={20} className="fill-current ml-1" />}
           </div>
-          <div className="flex items-center gap-1 text-muted-foreground text-sm bg-white/5 px-2 py-1 rounded-full">
-            <Heart size={14} className="text-pink-500" />
-            <span>{recording.likes}</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 text-muted-foreground text-sm bg-white/5 px-2 py-1 rounded-full">
+              <Heart size={14} className="text-pink-500" />
+              <span>{recording.likes}</span>
+            </div>
           </div>
         </div>
 
@@ -51,8 +95,13 @@ function RecordingCard({ recording, index }: { recording: Recording, index: numb
           </div>
         </div>
 
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
+          <span className="text-xs text-muted-foreground font-mono">by {recording.authorName}</span>
+          <FollowButton authorName={recording.authorName} followingNames={followingNames} />
+        </div>
+
         {recording.tags && recording.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
+          <div className="flex flex-wrap gap-2 mt-3">
             {recording.tags.map(tag => (
               <span key={tag} className="text-xs px-2 py-1 bg-white/5 rounded-md text-gray-400">
                 #{tag}
@@ -80,9 +129,15 @@ function StatCard({ label, value, icon: Icon }: { label: string, value: string |
 }
 
 export default function ExplorePage() {
+  const { username } = useUsername();
   const { data: featured, isLoading: isLoadingFeatured } = useListFeaturedRecordings();
   const { data: recent, isLoading: isLoadingRecent } = useListRecentRecordings();
   const { data: stats, isLoading: isLoadingStats } = useGetRecordingsSummary();
+  const { data: follows } = useListFollows(
+    { followerName: username ?? "" },
+    { query: { enabled: !!username, queryKey: getListFollowsQueryKey({ followerName: username ?? "" }) } }
+  );
+  const followingNames = follows?.map((f) => f.followingName) ?? [];
 
   return (
     <div className="min-h-screen pt-24 pb-32 px-6 overflow-y-auto bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
@@ -117,7 +172,7 @@ export default function ExplorePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featured?.map((rec, i) => (
-                <RecordingCard key={rec.id} recording={rec} index={i} />
+                <RecordingCard key={rec.id} recording={rec} index={i} followingNames={followingNames} />
               ))}
             </div>
           )}
@@ -138,7 +193,7 @@ export default function ExplorePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {recent?.map((rec, i) => (
-                <RecordingCard key={rec.id} recording={rec} index={i} />
+                <RecordingCard key={rec.id} recording={rec} index={i} followingNames={followingNames} />
               ))}
             </div>
           )}

@@ -186,3 +186,62 @@ export const ListRecentRecordingsResponseItem = zod.object({
 export const ListRecentRecordingsResponse = zod.array(
   ListRecentRecordingsResponseItem,
 );
+
+/**
+ * Returns recordings from people the follower follows
+ * @summary Get personalized feed
+ */
+export const GetFeedQueryParams = zod.object({
+  followerName: zod.coerce
+    .string()
+    .describe("The username of the person viewing the feed"),
+});
+
+export const GetFeedResponseItem = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  description: zod.string().nullish(),
+  audioUrl: zod.string(),
+  latitude: zod.number(),
+  longitude: zod.number(),
+  location: zod
+    .string()
+    .describe('Human-readable location name (e.g. \"São Paulo, Brazil\")'),
+  authorName: zod.string(),
+  likes: zod.number(),
+  durationSeconds: zod.number().nullish(),
+  tags: zod.array(zod.string()),
+  createdAt: zod.coerce.date(),
+});
+export const GetFeedResponse = zod.array(GetFeedResponseItem);
+
+/**
+ * @summary Get who a user follows
+ */
+export const ListFollowsQueryParams = zod.object({
+  followerName: zod.coerce.string(),
+});
+
+export const ListFollowsResponseItem = zod.object({
+  id: zod.number(),
+  followerName: zod.string(),
+  followingName: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+export const ListFollowsResponse = zod.array(ListFollowsResponseItem);
+
+/**
+ * @summary Follow a user by name
+ */
+export const FollowUserBody = zod.object({
+  followerName: zod.string(),
+  followingName: zod.string(),
+});
+
+/**
+ * @summary Unfollow a user by name
+ */
+export const UnfollowUserBody = zod.object({
+  followerName: zod.string(),
+  followingName: zod.string(),
+});

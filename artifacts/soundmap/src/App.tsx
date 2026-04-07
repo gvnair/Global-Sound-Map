@@ -14,6 +14,7 @@ const queryClient = new QueryClient();
 import HomePage from "@/pages/home";
 import ExplorePage from "@/pages/explore";
 import UploadPage from "@/pages/upload";
+import FeedPage from "@/pages/feed";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/" component={HomePage} />
       <Route path="/explore" component={ExplorePage} />
       <Route path="/upload" component={UploadPage} />
+      <Route path="/feed" component={FeedPage} />
       <Route component={NotFound} />
     </Switch>
   );

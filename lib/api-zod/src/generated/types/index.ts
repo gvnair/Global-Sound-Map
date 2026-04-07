@@ -6,9 +6,13 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./createFollowBody";
 export * from "./createRecordingBody";
 export * from "./errorResponse";
+export * from "./follow";
+export * from "./getFeedParams";
 export * from "./healthStatus";
+export * from "./listFollowsParams";
 export * from "./listRecordingsParams";
 export * from "./recording";
 export * from "./recordingsSummary";

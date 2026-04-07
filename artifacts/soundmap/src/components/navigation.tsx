@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Compass, Map as MapIcon, Upload, Headphones } from "lucide-react";
+import { Compass, Map as MapIcon, Upload, Headphones, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navigation() {
@@ -9,6 +9,7 @@ export function Navigation() {
     { href: "/", label: "Atlas", icon: MapIcon },
     { href: "/explore", label: "Explore", icon: Compass },
     { href: "/upload", label: "Share", icon: Upload },
+    { href: "/feed", label: "Feed", icon: Radio },
   ];
 
   return (
