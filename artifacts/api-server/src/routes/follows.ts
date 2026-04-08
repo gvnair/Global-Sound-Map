@@ -143,6 +143,7 @@ function serializeRecording(r: typeof recordingsTable.$inferSelect) {
     authorName: r.authorName,
     likes: r.likes,
     durationSeconds: r.durationSeconds,
+    photoUrl: r.photoUrl ?? null,
     tags: r.tags,
     createdAt: r.createdAt.toISOString(),
   };

@@ -16,7 +16,7 @@ function SetUsernamePrompt({ onSet }: { onSet: (name: string) => void }) {
   const [value, setValue] = useState("");
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-20 px-6 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
+    <div className="min-h-screen flex items-center justify-center pt-8 px-6 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
       <div className="max-w-md w-full text-center">
         <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(0,180,255,0.15)]">
           <Radio size={36} className="text-primary" />
@@ -186,7 +186,7 @@ export default function FeedPage() {
   const followingNames = follows?.map((f) => f.followingName) ?? [];
 
   return (
-    <div className="min-h-screen pt-24 pb-32 px-6 overflow-y-auto bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
+    <div className="min-h-screen pt-8 pb-32 px-6 overflow-y-auto bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
       <div className="max-w-4xl mx-auto">
         <header className="mb-10">
           <div className="flex items-center gap-3 mb-3">

@@ -13,6 +13,7 @@ export const recordingsTable = pgTable("recordings", {
   authorName: text("author_name").notNull(),
   likes: integer("likes").notNull().default(0),
   durationSeconds: integer("duration_seconds"),
+  photoUrl: text("photo_url"),
   tags: text("tags").array().notNull().default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

@@ -17,5 +17,7 @@ export interface CreateRecordingBody {
   authorName: string;
   /** @nullable */
   durationSeconds?: number | null;
+  /** @nullable */
+  photoUrl?: string | null;
   tags?: string[];
 }

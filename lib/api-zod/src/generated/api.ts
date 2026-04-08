@@ -47,6 +47,10 @@ export const ListRecordingsResponseItem = zod.object({
   authorName: zod.string(),
   likes: zod.number(),
   durationSeconds: zod.number().nullish(),
+  photoUrl: zod
+    .string()
+    .nullish()
+    .describe("Optional photo of the recording location"),
   tags: zod.array(zod.string()),
   createdAt: zod.coerce.date(),
 });
@@ -65,6 +69,7 @@ export const CreateRecordingBody = zod.object({
   location: zod.string(),
   authorName: zod.string(),
   durationSeconds: zod.number().nullish(),
+  photoUrl: zod.string().nullish(),
   tags: zod.array(zod.string()).optional(),
 });
 
@@ -88,6 +93,10 @@ export const GetRecordingResponse = zod.object({
   authorName: zod.string(),
   likes: zod.number(),
   durationSeconds: zod.number().nullish(),
+  photoUrl: zod
+    .string()
+    .nullish()
+    .describe("Optional photo of the recording location"),
   tags: zod.array(zod.string()),
   createdAt: zod.coerce.date(),
 });
@@ -119,6 +128,10 @@ export const LikeRecordingResponse = zod.object({
   authorName: zod.string(),
   likes: zod.number(),
   durationSeconds: zod.number().nullish(),
+  photoUrl: zod
+    .string()
+    .nullish()
+    .describe("Optional photo of the recording location"),
   tags: zod.array(zod.string()),
   createdAt: zod.coerce.date(),
 });
@@ -156,6 +169,10 @@ export const ListFeaturedRecordingsResponseItem = zod.object({
   authorName: zod.string(),
   likes: zod.number(),
   durationSeconds: zod.number().nullish(),
+  photoUrl: zod
+    .string()
+    .nullish()
+    .describe("Optional photo of the recording location"),
   tags: zod.array(zod.string()),
   createdAt: zod.coerce.date(),
 });
@@ -180,6 +197,10 @@ export const ListRecentRecordingsResponseItem = zod.object({
   authorName: zod.string(),
   likes: zod.number(),
   durationSeconds: zod.number().nullish(),
+  photoUrl: zod
+    .string()
+    .nullish()
+    .describe("Optional photo of the recording location"),
   tags: zod.array(zod.string()),
   createdAt: zod.coerce.date(),
 });
@@ -210,6 +231,10 @@ export const GetFeedResponseItem = zod.object({
   authorName: zod.string(),
   likes: zod.number(),
   durationSeconds: zod.number().nullish(),
+  photoUrl: zod
+    .string()
+    .nullish()
+    .describe("Optional photo of the recording location"),
   tags: zod.array(zod.string()),
   createdAt: zod.coerce.date(),
 });

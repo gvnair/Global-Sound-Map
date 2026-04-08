@@ -27,6 +27,11 @@ export interface Recording {
   likes: number;
   /** @nullable */
   durationSeconds?: number | null;
+  /**
+   * Optional photo of the recording location
+   * @nullable
+   */
+  photoUrl?: string | null;
   tags: string[];
   createdAt: string;
 }
@@ -42,6 +47,8 @@ export interface CreateRecordingBody {
   authorName: string;
   /** @nullable */
   durationSeconds?: number | null;
+  /** @nullable */
+  photoUrl?: string | null;
   tags?: string[];
 }
 

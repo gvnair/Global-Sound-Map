@@ -140,7 +140,7 @@ export default function ExplorePage() {
   const followingNames = follows?.map((f) => f.followingName) ?? [];
 
   return (
-    <div className="min-h-screen pt-24 pb-32 px-6 overflow-y-auto bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
+    <div className="min-h-screen pt-8 pb-32 px-6 overflow-y-auto bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background">
       <div className="max-w-6xl mx-auto">
         <header className="mb-16">
           <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">Discover the World</h1>

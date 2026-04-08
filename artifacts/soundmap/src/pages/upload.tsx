@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Mic, MapPin, Send, Loader2, Upload, Square, CircleDot, Trash2, CheckCircle2, Play, Pause } from "lucide-react";
+import { Mic, MapPin, Send, Loader2, Upload, Square, CircleDot, Trash2, CheckCircle2, Play, Pause, ImagePlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUsername } from "@/hooks/use-username";
 
@@ -247,6 +247,79 @@ function AudioPicker({ onAudioReady }: { onAudioReady: (url: string) => void }) 
   );
 }
 
+function PhotoPicker({ onPhotoReady }: { onPhotoReady: (url: string | null) => void }) {
+  const { toast } = useToast();
+  const [preview, setPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPreview(URL.createObjectURL(file));
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("photo", file);
+      const res = await fetch(`${BASE_URL}/api/upload-photo`, { method: "POST", body: formData });
+      if (!res.ok) throw new Error();
+      const { photoUrl } = await res.json();
+      onPhotoReady(photoUrl);
+    } catch {
+      toast({ title: "Photo upload failed", description: "Could not upload photo.", variant: "destructive" });
+      setPreview(null);
+      onPhotoReady(null);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemove = () => {
+    setPreview(null);
+    onPhotoReady(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  return (
+    <div>
+      {!preview ? (
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="group w-full flex flex-col items-center gap-3 p-8 rounded-xl border border-dashed border-white/20 bg-background/30 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
+        >
+          <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/30 transition-colors">
+            <ImagePlus size={22} className="text-muted-foreground group-hover:text-primary transition-colors" />
+          </div>
+          <div className="text-center">
+            <p className="font-medium text-sm">Add a place photo</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Optional — shown as the post thumbnail</p>
+          </div>
+        </button>
+      ) : (
+        <div className="relative rounded-xl overflow-hidden border border-white/10 aspect-video">
+          <img src={preview} alt="Location preview" className="w-full h-full object-cover" />
+          {isUploading && (
+            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+              <Loader2 size={24} className="animate-spin text-white" />
+            </div>
+          )}
+          {!isUploading && (
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 hover:bg-red-500/80 flex items-center justify-center transition-colors"
+            >
+              <X size={16} className="text-white" />
+            </button>
+          )}
+        </div>
+      )}
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+    </div>
+  );
+}
+
 export default function UploadPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
@@ -254,6 +327,7 @@ export default function UploadPage() {
   const createMutation = useCreateRecording();
   const [isLocating, setIsLocating] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string>("");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -280,7 +354,7 @@ export default function UploadPage() {
         : [];
 
       await createMutation.mutateAsync({
-        data: { ...data, audioUrl, tags: tagsArray },
+        data: { ...data, audioUrl, photoUrl: photoUrl ?? undefined, tags: tagsArray },
       });
 
       toast({ title: "Transmission successful", description: "Your audio has been pinned to the map." });
@@ -311,7 +385,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-32 px-6 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background to-background relative overflow-hidden">
+    <div className="min-h-screen pt-8 pb-32 px-6 overflow-y-auto bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background to-background relative">
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none -translate-x-1/2" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-3xl opacity-50 pointer-events-none translate-x-1/4 translate-y-1/4" />
 
@@ -335,6 +409,14 @@ export default function UploadPage() {
                   <Mic className="text-primary" size={20} /> Audio
                 </h3>
                 <AudioPicker onAudioReady={setAudioUrl} />
+              </div>
+
+              <div className="space-y-4 pt-2">
+                <h3 className="text-xl font-bold border-b border-white/10 pb-4 flex items-center gap-2">
+                  <ImagePlus className="text-primary" size={20} /> Place Photo
+                  <span className="ml-auto text-xs font-normal text-muted-foreground">Optional</span>
+                </h3>
+                <PhotoPicker onPhotoReady={setPhotoUrl} />
               </div>
 
               <div className="space-y-6 pt-4">

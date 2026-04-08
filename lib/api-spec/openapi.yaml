@@ -339,6 +339,9 @@ components:
           type: integer
         durationSeconds:
           type: ["integer", "null"]
+        photoUrl:
+          type: ["string", "null"]
+          description: Optional photo of the recording location
         tags:
           type: array
           items:
@@ -377,6 +380,8 @@ components:
           type: string
         durationSeconds:
           type: ["integer", "null"]
+        photoUrl:
+          type: ["string", "null"]
         tags:
           type: array
           items:
