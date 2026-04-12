@@ -1,9 +1,11 @@
 import { Link, useLocation } from "wouter";
 import { Compass, Map as MapIcon, CircleDot, Headphones, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export function Navigation() {
   const [location] = useLocation();
+  const [expanded, setExpanded] = useState(false);
 
   const links = [
     { href: "/", label: "Atlas", icon: MapIcon },
@@ -13,38 +15,63 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[1000] px-6 py-4 flex items-center justify-between bg-background/90 backdrop-blur-md border-b border-white/5 pointer-events-none">
-      <div className="flex items-center gap-2 pointer-events-auto">
-        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/50 text-primary shadow-[0_0_15px_rgba(0,180,255,0.4)]">
+    <nav
+      className={cn(
+        "fixed top-1/2 left-3 -translate-y-1/2 z-[1000]",
+        "flex flex-col items-start gap-1",
+        "bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl",
+        "transition-all duration-300 ease-in-out overflow-hidden",
+        expanded ? "w-44 p-3" : "w-14 p-2"
+      )}
+      onMouseEnter={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}
+    >
+      {/* Logo */}
+      <div className="flex items-center gap-3 px-1 py-2 mb-1 w-full">
+        <div className="w-8 h-8 shrink-0 rounded-full bg-primary/20 flex items-center justify-center border border-primary/50 text-primary shadow-[0_0_15px_rgba(0,180,255,0.4)]">
           <Headphones size={16} />
         </div>
-        <span className="font-mono tracking-widest text-lg font-bold uppercase text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+        <span
+          className={cn(
+            "font-mono tracking-widest text-xs font-bold uppercase text-white whitespace-nowrap",
+            "transition-all duration-300",
+            expanded ? "opacity-100 w-auto" : "opacity-0 w-0"
+          )}
+        >
           SoundMap
         </span>
       </div>
 
-      <div className="flex items-center gap-1 bg-card/80 backdrop-blur-md p-1.5 rounded-full border border-white/5 pointer-events-auto shadow-xl">
-        {links.map((link) => {
-          const isActive = location === link.href;
-          return (
-            <Link key={link.href} href={link.href}>
-              <div
+      {/* Divider */}
+      <div className="w-full h-px bg-white/10 mb-1" />
+
+      {/* Nav links */}
+      {links.map((link) => {
+        const isActive = location === link.href;
+        return (
+          <Link key={link.href} href={link.href} className="w-full">
+            <div
+              className={cn(
+                "flex items-center gap-3 px-2 py-2.5 rounded-xl text-sm font-medium",
+                "transition-all duration-200 cursor-pointer w-full",
+                isActive
+                  ? "bg-primary/20 text-primary"
+                  : "text-muted-foreground hover:text-white hover:bg-white/10"
+              )}
+            >
+              <link.icon size={18} className="shrink-0" />
+              <span
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer",
-                  isActive
-                    ? "bg-primary/10 text-primary shadow-[0_0_10px_rgba(0,180,255,0.2)]"
-                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                  "whitespace-nowrap transition-all duration-300",
+                  expanded ? "opacity-100 w-auto" : "opacity-0 w-0"
                 )}
               >
-                <link.icon size={16} />
-                <span>{link.label}</span>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-      
-      <div className="w-[120px] pointer-events-auto" />
+                {link.label}
+              </span>
+            </div>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

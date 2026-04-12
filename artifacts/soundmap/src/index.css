@@ -166,7 +166,7 @@
 }
 
 .leaflet-tile-pane {
-  filter: hue-rotate(20deg) invert(1) grayscale(1) brightness(0.8) contrast(1.2) saturate(1.5);
+  
 }
 
 .leaflet-control-zoom a {
