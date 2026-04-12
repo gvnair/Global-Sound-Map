@@ -4,7 +4,7 @@ import { useListRecordings } from "@workspace/api-client-react";
 import { usePlayer } from "@/components/player-context";
 import { Play, MapPin, Headphones, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 // ── Marker icon ──────────────────────────────────────────────────────────────
 const audioMarkerIcon = L.divIcon({
@@ -35,7 +35,7 @@ interface SearchResult {
 // ── Fly-to helper (must be inside MapContainer) ───────────────────────────────
 function FlyTo({ coords }: { coords: [number, number] | null }) {
   const map = useMap();
-  if (coords) map.flyTo(coords, 10, { duration: 1.4 });
+  if (coords) map.flyTo(coords, 13, { duration: 1.4 });
   return null;
 }
 
@@ -127,6 +127,24 @@ export default function HomePage() {
   const { playRecording, activeRecording } = usePlayer();
   const [flyTo, setFlyTo] = useState<[number, number] | null>(null);
 
+  // GPS: ask for location on load, fall back to Soho if denied
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFlyTo([position.coords.latitude, position.coords.longitude]);
+        },
+        () => {
+          // GPS denied or unavailable — fly to Soho, London
+          setFlyTo([51.5137, -0.1337]);
+        },
+        { timeout: 5000 }
+      );
+    } else {
+      setFlyTo([51.5137, -0.1337]);
+    }
+  }, []);
+
   return (
     <div className="absolute inset-0 bg-background">
       {isLoading && (
@@ -149,8 +167,8 @@ export default function HomePage() {
       />
 
       <MapContainer
-        center={[20, 0]}
-        zoom={3}
+        center={[51.5137, -0.1337]}
+        zoom={13}
         minZoom={2} // ← can't zoom out past seeing most of the globe
         maxZoom={18}
         className="w-full h-full"
