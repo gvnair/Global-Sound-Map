@@ -13,7 +13,6 @@ import { Mic, MapPin, Send, Loader2, Upload, Square, CircleDot, Trash2, CheckCir
 import { cn } from "@/lib/utils";
 import { useUsername } from "@/hooks/use-username";
 
-const BASE_URL = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters").max(100),
@@ -54,7 +53,7 @@ function AudioPicker({ onAudioReady }: { onAudioReady: (url: string) => void }) 
     try {
       const formData = new FormData();
       formData.append("audio", blob, name);
-      const res = await fetch(`${BASE_URL}/api/upload-audio`, { method: "POST", body: formData });
+      const res = await fetch(`/api/upload-audio`, { method: "POST", body: formData });
       if (!res.ok) throw new Error("Upload failed");
       const { audioUrl: url } = await res.json();
       setAudioUrl(url);
@@ -261,7 +260,7 @@ function PhotoPicker({ onPhotoReady }: { onPhotoReady: (url: string | null) => v
     try {
       const formData = new FormData();
       formData.append("photo", file);
-      const res = await fetch(`${BASE_URL}/api/upload-photo`, { method: "POST", body: formData });
+      const res = await fetch(`/api/upload-photo`, { method: "POST", body: formData });
       if (!res.ok) throw new Error();
       const { photoUrl } = await res.json();
       onPhotoReady(photoUrl);

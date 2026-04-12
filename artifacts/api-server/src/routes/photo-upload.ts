@@ -37,10 +37,11 @@ router.post("/upload-photo", upload.single("photo"), (req, res): void => {
     return;
   }
 
-  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
-  const host = req.headers["x-forwarded-host"] || req.get("host");
-  const baseUrl = `${protocol}://${host}`;
-  const photoUrl = `${baseUrl}/uploads/${req.file.filename}`;
+  const replitDomain = process.env.REPLIT_DEV_DOMAIN;
+  const baseUrl = replitDomain
+    ? `https://${replitDomain}`
+    : `${req.headers["x-forwarded-proto"] || req.protocol}://${req.headers["x-forwarded-host"] || req.get("host")}`;
+  const audioUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
   res.json({ photoUrl });
 });
