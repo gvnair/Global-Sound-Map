@@ -41,7 +41,7 @@ router.post("/upload-photo", upload.single("photo"), (req, res): void => {
   const baseUrl = replitDomain
     ? `https://${replitDomain}`
     : `${req.headers["x-forwarded-proto"] || req.protocol}://${req.headers["x-forwarded-host"] || req.get("host")}`;
-  const audioUrl = `${baseUrl}/uploads/${req.file.filename}`;
+  const photoUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
   res.json({ photoUrl });
 });
