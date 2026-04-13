@@ -1,4 +1,6 @@
 import { pgTable, text, serial, timestamp, real, integer } from "drizzle-orm/pg-core";
+export { usersTable, insertUserSchema } from "./users";
+export type { InsertUser, User } from "./users";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
