@@ -6,6 +6,7 @@ import {
   Radio,
   User,
   Headphones,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUsername } from "@/hooks/use-username";
@@ -101,6 +102,25 @@ export function Sidebar() {
             </div>
           </div>
         </Link>
+
+        {/* Logout */}
+        <div
+          className="flex items-center gap-3 px-2 py-2 rounded-xl cursor-pointer hover:bg-red-500/10 transition-colors mt-1"
+          onClick={() => {
+            localStorage.clear();
+            window.location.reload();
+          }}
+        >
+          <div className="w-8 h-8 shrink-0 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+            <LogOut size={14} className="text-red-400" />
+          </div>
+          <div className={cn(
+            "min-w-0 transition-all duration-300",
+            expanded ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
+          )}>
+            <p className="text-xs font-semibold text-red-400">Log out</p>
+          </div>
+        </div>
       </aside>
 
       {/* ── MOBILE: anchored bottom bar ── */}
