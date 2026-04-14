@@ -384,7 +384,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen pt-8 pb-32 px-6 overflow-y-auto bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background to-background relative">
+    <div className="min-h-screen pt-8 pb-48 px-6 overflow-y-auto bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background to-background relative">
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50 pointer-events-none -translate-x-1/2" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-3xl opacity-50 pointer-events-none translate-x-1/4 translate-y-1/4" />
 

@@ -64,10 +64,10 @@ function App() {
       <TooltipProvider>
         <PlayerProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <div className="h-screen flex bg-background text-foreground selection:bg-primary/30">
+            <div className="min-h-screen flex bg-background text-foreground selection:bg-primary/30">
               <Sidebar />
               <div className="flex-1 flex flex-col min-w-0 relative overflow-y-auto pb-16 md:pb-0">
-                <main className="flex-1 relative overflow-hidden">
+                <main className="flex-1 relative overflow-y-auto">
                   <Router />
                 </main>
                 <AudioPlayer />
